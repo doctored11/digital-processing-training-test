@@ -3,58 +3,61 @@
 function start()
     signals = [
         createSignal(1, 1, %pi/2, '1', 'r-'),
-        createSignal(1, 2, -%pi/4, '2', 'b-')
+        createSignal(2, 2, -%pi/4, '2', 'b-')
        ];
        
    result_sum = addSignals(signals(1), signals(2));
    result_substract= subtractSignals(signals(1), signals(2));
    result_multy = multiplySignals(signals(1), signals(2));
    result_devide = devideSignals(signals(1), signals(2));
+   
+   //то что нужно - просто раскоментируй ) Ctrl + shift+D
+   //и вызов start())
    signals = [
             signals;
-            result_sum;
-            result_substract;
-            result_multy;
-            result_devide;
+//            result_sum;
+//            result_substract;
+//            result_multy;
+//            result_devide;
             ];
    plotCreate() ;
    plotDrawHarmonicSignals(signals);
-   
+//   
    plotCreate();
    plotLissajousFigure(signals(1), signals(2));
-   
-   plotCreate()
-   plotLissajousWithPhaseShift(signals(1), signals(2));
-   
-   plotCreate() 
-   plotLissajousWithFrequencyShift(signals(1), signals(2));
-   
-   plotCreate() ;
-   createSquarewave(50, 2, 2, t);
-   
-   plotCreate() ;
-   createTriangularewave(10,1,3,t);
-   
-   plotCreate();
-   createSawwave(10,1,3,t);
-   
-   plotCreate() ;
-   createFurieFourth(1000,1,3,t);
-   
-   plotCreate() ;
-   createFurieFifth(20000,1,6,t);
-   
-   plotCreate() ;
-   createFurieSixth(4,1,2,t);
-   
-   plotCreate() ;
-   plotDrawStepSignal(signals(1));
-
-    plotCreate() ;
-    createSingleImpulse(t, 0.5,1, 5.0)
-    
-    plotCreate();
-    createUnitStepSignal(t);
+//   
+//   plotCreate()
+//   plotLissajousWithPhaseShift(signals(1), signals(2));
+////   
+//   plotCreate() 
+//   plotLissajousWithFrequencyShift(signals(1), signals(2));
+//   
+//   plotCreate() ;
+//   createSquarewave(50, 2, 2, t);
+////   
+//   plotCreate() ;
+//   createTriangularewave(10,1,3,t);
+////   
+//   plotCreate();
+//   createSawwave(10,1,3,t);
+//   
+//   plotCreate() ;
+//   createFurieFourth(1000,1,3,t);
+//   
+//   plotCreate() ;
+//   createFurieFifth(20000,1,6,t);
+//   
+//   plotCreate() ;
+//   createFurieSixth(4,1,2,t);
+//   
+//   plotCreate() ;
+//   plotDrawStepSignal(signals(1));
+//
+//    plotCreate() ;
+//    createSingleImpulse(t, 0.5,1, 5.0)
+//    
+//    plotCreate();
+//    createUnitStepSignal(t);
     
 endfunction
 
@@ -213,7 +216,7 @@ function plotLissajousWithPhaseShift(signalX, signalY)
         i=i+1;
         
         
-        shiftedSignalX = shiftSignalPhase(signalX,  phase,0);
+        shiftedSignalX = shiftSignal(signalX,  phase,0);
         //Вариант с Subplot (все на 1ом)
         subplot(c_x,c_y,i);
         plot(shiftedSignalX.amplitude,signalY.amplitude)
@@ -230,7 +233,7 @@ endfunction
 
 function plotLissajousWithFrequencyShift(signalX, signalY)
     clf(); 
-    step = 0.1
+    step = 1
     frequenses = 0:step:3*%pi; 
     count = length(frequenses);
     c_x = ceil(sqrt( count));
@@ -238,7 +241,7 @@ function plotLissajousWithFrequencyShift(signalX, signalY)
     i=0
     
     for frequence = frequenses
-        shiftedSignalX = shiftSignalPhase(signalX,0,frequence);
+        shiftedSignalX = shiftSignal(signalX,0,frequence);
         
 
         //вариант  subplot
@@ -255,7 +258,7 @@ function plotLissajousWithFrequencyShift(signalX, signalY)
 endfunction
 
 
-function shiftedSignal = shiftSignalPhase(signal, phaseShift, frequencyShift)
+function shiftedSignal = shiftSignal(signal, phaseShift, frequencyShift)
     shiftedSignal = struct('amplitude',signal.nominalAmplitude * sin(2*%pi*(signal.frequency+frequencyShift)*t ...
       + signal.phase+phaseShift),...
      'nominalAmplitude',signal.nominalAmplitude,'frequency', signal.frequency+frequencyShift, 'phase', signal.phase+phaseShift,...
@@ -268,7 +271,7 @@ endfunction
 
 function createSquarewave(numHarmonics, amplitude, frequency, t)
     bufferSum =0
-   
+    //frequency = 2*%pi * frequency;
     for k = 1:2:numHarmonics*2
         bufferSum = bufferSum + sin(k*frequency*t)/k
     end
@@ -280,7 +283,7 @@ endfunction
 
 function createTriangularewave(numHarmonics, amplitude, frequency, t)
     bufferSum =0
-   
+//    frequency = 2*%pi * frequency;
     for k = 1:2:numHarmonics*2
          bufferSum = bufferSum + (-1)^((k-1)/2)  * ...
           sin(k*frequency*t)/(k^2);
@@ -320,15 +323,16 @@ endfunction
 function createFurieFifth(numHarmonics, amplitude, frequency, t) //не баботает 
     //-_-
     //Тут не по шаблону(
+    //frequency = 2*%pi*frequency
     clf();
     bufferSum =0
     for k = 1:1:numHarmonics+1 //возможно в формуле error
           bufferSum = bufferSum +...
-          1/k .* sin((k.*frequency*t)/2) .* cos(k*frequency*t);
+          1/k .*( sin((k.*frequency*t)/2) .* cos(k*frequency*t));
    
     end
     static = t *frequency+2/%pi;
-    
+//    
     wave = static .* bufferSum;
     wave = amplitude .* wave;
     plot(t, wave);
@@ -366,7 +370,7 @@ function furieBase( mainFuriePart, statisFuriePart,t)
 endfunction
 
 //////////////////////////////////////////////
-////////// прочее
+////////// импульсы
 /////////////////////////////////////////////
 
 function createSingleImpulse(t, t1, t2, Amplitude)
