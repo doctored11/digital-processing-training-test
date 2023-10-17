@@ -54,7 +54,7 @@ function start()
 //   plotDrawStepSignal(signals(1));
 //
 //    plotCreate() ;
-//    createSingleImpulse(t, 0.5,1, 5.0)
+    createSingleImpulse(t, 0.5,1, 5.0);
 //    
 //    plotCreate();
 //    createUnitStepSignal(t);

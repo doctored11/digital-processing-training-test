@@ -1,28 +1,32 @@
 t = -0:0.01:0.2;
-Fs = 3; 
+Fs =3
 
 function start()
     //1.6.2
-    signals = fillArrOfSignals(1,Fs,2,1);
+    signals = fillArrOfSignals(1,Fs,2,1); //шаг дискретизации заложен ( должен быть в 2 раза больше частоты)
    
-    plotDrawHarmonicSignals(signals) ;
+//    plotDrawHarmonicSignals(signals(3)) ;
     
-    
-    //1.6.3
-    discretizationSignals = plotDrawDiscretizationHarmonicSignals(signals)
-    //типо интерполяция ( plot сам по себе все делает)
+//    
+//    //1.6.3
+       plotDrawHarmonicSignals(signals(3)) ;
+
+
+    discretizationSignals = plotDrawDiscretizationHarmonicSignals(signals(3)) //(1) - временно )
+//    //типо интерполяция ( plot сам по себе все делает)
     plotCreate()
      interpolatedSignals=[]
-     for i=1:length(signals)
-          interpolatedSignal= signals(i);
-          interpolatedSignal.amplitude = plotDrawDiscretizationHarmonicSignals(signals(i))(:, 2);//костылек) 
+     for i=1:length(signals(3))
+          interpolatedSignal= signals(3); //3=i
+          interpolatedSignal.amplitude = plotDrawDiscretizationHarmonicSignals(signals(3))(:, 2);//костылек (обрезаем время) + 3=i
+         
           interpolatedSignals=[interpolatedSignals,interpolatedSignal]
      end
     plotDrawHarmonicSignals(interpolatedSignals); //востановлением занимается plot()
-    
-    
-   //поиск частоты п 
-   
+//    
+//    
+//   //поиск частоты п 
+//   
     clc()
     for i=1:length(interpolatedSignals)
    
@@ -32,24 +36,24 @@ function start()
         disp('Период сигнала ' + string(i) + ': ' + string(period));
         disp('Частота сигнала ' + string(i) + ': ' + string(frequency));
     end
-
-    //Построить график изменения частоты дискретизированного
-    //сигнала. Объяснить его особенности -- это не понял, частота же не меняется ( у одного сигнала)
-
-    //1.7.1
-    
-    
+//
+//    //Построить график изменения частоты дискретизированного
+//    //сигнала. Объяснить его особенности -- это не понял, частота же не меняется ( у одного сигнала)
+//
+//    //1.7.1
+//    
+//    
     plotCreate();
-    buffSignal = createSignal(1, Fs, 0, '1.7.1', 'r')
+    buffSignal = createSignal(1, 3*Fs/5, 0, '1.7.1', 'r')
     discrSignal = plotDrawDiscretizationHarmonicSignals(buffSignal)
-    
-    //1.7.2 - описание конечно я не понял 
-    N=2^9;// -но чем степень выше тем выше точность (приближение к авто квантованому графику)
-    quantized_signal = quantizeSignalAutoMaxAmplitude(discrSignal, N);
-    plot2d2( quantized_signal(:,1),quantized_signal(:,2)); 
-    
-    //1.7.3 - не вообще не понял, не нашел инструкцию в методе к этому
-    
+//    
+//    //1.7.2 - описание конечно я не понял 
+//    N=2^9;// -но чем степень выше тем выше точность 
+//    quantized_signal = quantizeSignalAutoMaxAmplitude(discrSignal, N);
+//    plot2d2( quantized_signal(:,1),quantized_signal(:,2)); 
+//    
+//    //1.7.3 - не вообще не понял, не нашел инструкцию в методе к этому
+//    
 
 endfunction
 
@@ -108,16 +112,19 @@ endfunction
 
 
 function step_points = plotDrawDiscretizationHarmonicSignals(signals)
-  
     legend_labels = [];
-    step_points = []; // 
+    step_points = [];
 
     for i = 1:length(signals)
         amplitude = signals(i).amplitude;
-        plot2d2(t, amplitude);  
+        Fs = signals(i).frequency;
+        dt = 1 / Fs;                     
+
+        t_discrete = t;
+        plot2d2(t_discrete, amplitude);
         legend_labels = [legend_labels, signals(i).name];
-    
-        step_points = [step_points; [t', amplitude']]; // волшебный синтаксис транс 
+
+        step_points = [step_points; [t_discrete', amplitude']];
     end
 
     legend(legend_labels);
@@ -125,6 +132,7 @@ function step_points = plotDrawDiscretizationHarmonicSignals(signals)
     ylabel('Амплитуда');
     title('Дискретизированный сигнал');
 endfunction
+
 
 
 
@@ -197,5 +205,4 @@ function quantized_signal = quantizeSignalAutoMaxAmplitude(signal, N)
 endfunction
 
 //1.7.3 - вопросы конечно
-
 
