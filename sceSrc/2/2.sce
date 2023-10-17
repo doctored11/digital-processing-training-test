@@ -1,5 +1,7 @@
- t = -1:0.01:5
+ t = -1:0.001:10
 
+
+tau=1;
 function start()
     signals = [
         createSignal(1, 1, %pi/2, '1', 'r-'),
@@ -23,38 +25,38 @@ function start()
    plotCreate() ;
    plotDrawHarmonicSignals(signals);
 //   
-   plotCreate();
-   plotLissajousFigure(signals(1), signals(2));
-//   
+//   plotCreate();
+//   plotLissajousFigure(signals(1), signals(2));
+////   
 //   plotCreate()
 //   plotLissajousWithPhaseShift(signals(1), signals(2));
 ////   
 //   plotCreate() 
-//   plotLissajousWithFrequencyShift(signals(1), signals(2));
+ //  plotLissajousWithFrequencyShift(signals(1), signals(2));
 //   
+//plotCreate() ;
+//  createSquarewave(50, 2, 5, t);
+//////   
 //   plotCreate() ;
-//   createSquarewave(50, 2, 2, t);
-////   
-//   plotCreate() ;
-//   createTriangularewave(10,1,3,t);
-////   
+//   createTriangularewave(10,1,5,t);
+//////   
 //   plotCreate();
-//   createSawwave(10,1,3,t);
+//  createSawwave(10,1,5,t);
+//   
+   plotCreate() ;
+   createFurieFourth(1000,1,5,t,tau);
+//   
+   plotCreate() ;
+   createFurieFifth(1000,10,5,t,tau);
 //   
 //   plotCreate() ;
-//   createFurieFourth(1000,1,3,t);
-//   
-//   plotCreate() ;
-//   createFurieFifth(20000,1,6,t);
-//   
-//   plotCreate() ;
-//   createFurieSixth(4,1,2,t);
+//  createFurieSixth(4,1,5,t);
 //   
 //   plotCreate() ;
 //   plotDrawStepSignal(signals(1));
-//
+////
 //    plotCreate() ;
-    createSingleImpulse(t, 0.5,1, 5.0);
+//    createSingleImpulse(t, 0.5,1, 5.0);
 //    
 //    plotCreate();
 //    createUnitStepSignal(t);
@@ -269,9 +271,9 @@ endfunction
 /////////////// Фурье Приколы
 //////////////////////////////////////////////////////////////
 
-function createSquarewave(numHarmonics, amplitude, frequency, t)
+function createSquarewave(numHarmonics, amplitude, T, t)
     bufferSum =0
-    //frequency = 2*%pi * frequency;
+    frequency = 2*%pi /T
     for k = 1:2:numHarmonics*2
         bufferSum = bufferSum + sin(k*frequency*t)/k
     end
@@ -281,9 +283,9 @@ function createSquarewave(numHarmonics, amplitude, frequency, t)
 endfunction
 
 
-function createTriangularewave(numHarmonics, amplitude, frequency, t)
+function createTriangularewave(numHarmonics, amplitude, T, t)
     bufferSum =0
-//    frequency = 2*%pi * frequency;
+frequency = 2*%pi /T
     for k = 1:2:numHarmonics*2
          bufferSum = bufferSum + (-1)^((k-1)/2)  * ...
           sin(k*frequency*t)/(k^2);
@@ -293,7 +295,8 @@ function createTriangularewave(numHarmonics, amplitude, frequency, t)
     furieBase(bufferSum,static,t)
    
 endfunction
-function createSawwave(numHarmonics, amplitude, frequency, t)
+function createSawwave(numHarmonics, amplitude, T, t)
+    frequency = 2*%pi /T
     bufferSum =0
     for k = 1:1:numHarmonics+1
          bufferSum = bufferSum + 1/k*sin(k*frequency*t)
@@ -306,11 +309,12 @@ endfunction
 
 //
 
-function createFurieFourth(numHarmonics, amplitude, frequency, t)
+function createFurieFourth(numHarmonics, amplitude, T, t,tau)
+    frequency = 2*%pi /T
     bufferSum =0
     for k = 1:2:numHarmonics*2
          bufferSum = bufferSum +...
-          1/k .* sin((k.*frequency*t)/2) .* cos(k*frequency*t); 
+          1/k .* sin((k.*frequency*tau)/2) .* cos(k*frequency*t); 
    
     end
     static = 4*amplitude/%pi; 
@@ -320,18 +324,20 @@ endfunction
 
 //---
 
-function createFurieFifth(numHarmonics, amplitude, frequency, t) //не баботает 
+function createFurieFifth(numHarmonics, amplitude, T, t, tau) //не баботает 
+    frequency = 2*%pi /T
+    
     //-_-
     //Тут не по шаблону(
-    //frequency = 2*%pi*frequency
+
     clf();
     bufferSum =0
     for k = 1:1:numHarmonics+1 //возможно в формуле error
           bufferSum = bufferSum +...
-          1/k .*( sin((k.*frequency*t)/2) .* cos(k*frequency*t));
+          (1/k * sin(k*frequency*tau/2) * cos(k*frequency*t));
    
     end
-    static = t *frequency+2/%pi;
+    static = tau *frequency+2/%pi;
 //    
     wave = static .* bufferSum;
     wave = amplitude .* wave;
@@ -339,7 +345,8 @@ function createFurieFifth(numHarmonics, amplitude, frequency, t) //не бабо
    
 endfunction
 
-function createFurieSixth(numHarmonics, amplitude, frequency, t) 
+function createFurieSixth(numHarmonics, amplitude, T, t) 
+    frequency = 2*%pi /T
     //-_-
     //Тут не по шаблону(
     clf();
@@ -351,7 +358,7 @@ function createFurieSixth(numHarmonics, amplitude, frequency, t)
     end
     static =0.5
     
-    wave = static .* bufferSum;
+    wave = static + bufferSum;
     wave = 4* amplitude/%pi .* wave;
     plot(t, wave);
    
