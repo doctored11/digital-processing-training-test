@@ -44,10 +44,10 @@ function start()
 //  createSawwave(10,1,5,t);
 //   
    plotCreate() ;
-   createFurieFourth(1000,1,5,t,tau);
+   createFurieFourth(1000,1,3,t,tau);
 //   
    plotCreate() ;
-   createFurieFifth(1000,10,5,t,tau);
+   createFurieFifth(1000,10,3,t,tau);
 //   
 //   plotCreate() ;
 //  createFurieSixth(4,1,5,t);
@@ -324,7 +324,7 @@ endfunction
 
 //---
 
-function createFurieFifth(numHarmonics, amplitude, T, t, tau) //не баботает 
+function createFurieFifth(numHarmonics, amplitude, T, t, tau) //
     frequency = 2*%pi /T
     
     //-_-
@@ -332,7 +332,7 @@ function createFurieFifth(numHarmonics, amplitude, T, t, tau) //не бабот�
 
     clf();
     bufferSum =0
-    for k = 1:1:numHarmonics+1 //возможно в формуле error
+    for k = 1:1:numHarmonics+1 
           bufferSum = bufferSum +...
           (1/k * sin(k*frequency*tau/2) * cos(k*frequency*t));
    
