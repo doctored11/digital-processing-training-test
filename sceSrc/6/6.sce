@@ -1,37 +1,40 @@
 
 //то что надо знать
 //bt
-Tc = 0.32;
-U0=20;
+Tc2 = 0.26;
+U0=27;
 Fd = 1000;
 
 
 //для синусоид at
 U01 = 11;
 U02=U0-U01;
-f1 = 15;
-phase1 =%pi/6;
+Tc1=0.32;
+f1 = 10;
+phase1 =0; //%pi/6
 
 
 //dt
-B=20
+
+B=10
+Tc4=0.26
 
 //ct
-
+t0=0.26
+Tc3=2*t0
 //
-t=0:0.001:Tc;
-t2 =-Tc:1/Fd:Tc;
-t3=-Tc:0.001:Tc
-t4=0:0.001:Tc;
+t=0:0.001:Tc1;
+t2 =-Tc2:1/Fd:Tc2;
+t3=-Tc3:0.001:Tc3;
+t4=0:0.001:Tc4;
 
 
 function start()
     
-    //v1 одиночный импульс
      
     at = createSignal(U01, f1, phase1, '1', 'r-'); //эта структура тянется с первой лабы, тогда я думал что параметры сигналов будут нужны
     bt = createSingleImpulse(t2, -Tc/2, Tc/2, U0);
-    ct = createUnitStepSignal(t3);
+    ct = createUnitStepSignal(t3,t0);
     dt = exp(B*t4);
     
  
@@ -249,9 +252,9 @@ endfunction
 //
 
 //как же удобно у самого себя все функции из 1ой лабы воровать 
-function unitStepSignal = createUnitStepSignal(t)
+function unitStepSignal = createUnitStepSignal(t, t_0)
     unitStepSignal = zeros(size(t));  
-    unitStepSignal(t >= 0) = 1; 
+    unitStepSignal(t >=t_0) = 1; 
         
     plot(t, unitStepSignal);      
     

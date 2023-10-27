@@ -1,15 +1,15 @@
 
 //то что надо знать
 Tc = 0.32;
-U0=20;
-Fd = 1000;
+U0=27;
+Fd = 1200;
 //для синусоид
 U01 = 11;
 U02=U0-U01;
-f1 = 110;//частота
-f2 = 15;
-phase1 =%pi/6;
-phase2 =%pi/4;
+f1 = 180;//частота
+f2 = 50;
+phase1 =%pi/3;
+phase2 =%pi/6;
 
 //
 
@@ -21,6 +21,7 @@ function start()
    impulseSignal = createSingleImpulse(t, -Tc/2, Tc/2, U0)
  
   [amplitudeSpectrum, frequencies,Dpf] = computeDFT(impulseSignal, Fd);
+  disp(frequencies)
   //обратный ДПФ
     ReverseDpf=ifft(Dpf)
   //СПМ (дпф на сопр вектор)
@@ -29,10 +30,10 @@ function start()
     
     
     //Построение графиков
-    disp(amplitudeSpectrum)
+//    disp(amplitudeSpectrum)
     figure;
     subplot(2,2,1); plot(t, impulseSignal); xtitle('Исходный сигнал')
-    subplot(2,2,2); plot(frequencies, amplitudeSpectrum); xtitle('ДПФ')
+    subplot(2,2,2); plot(frequencies, amplitudeSpectrum); xtitle('ДПФ1')
     subplot(2,2,3); plot(t, ReverseDpf); xtitle('ОДПФ')
     subplot(2,2,4); plot(frequencies, Spm); xtitle('СПМ')
 
@@ -57,7 +58,7 @@ function start()
     disp(size(frequencies))
      figure;
     subplot(2,2,1); plot(t, result_sum.amplitude); xtitle('Исходный сигнал')
-       subplot(2,2,2); plot(frequencies, amplitudeSpectrum.'); xtitle('ДПФ')
+       subplot(2,2,2); plot(frequencies, amplitudeSpectrum.'); xtitle('ДПФ2')
 
     subplot(2,2,3); plot(t, ReverseDpf); xtitle('ОДПФ')
     subplot(2,2,4); plot(frequencies, Spm); xtitle('СПМ')
@@ -116,21 +117,7 @@ function impulseSignal = createSingleImpulse(t, t1, t2, Amplitude)
     
 endfunction
 
-function [amplitudeSpectrum, frequencies, Dpf] = computeDFT(signal, Fd)
-    N = size(signal)(2);//ищем кол-во точек в строке
-     
-    frequencies = Fd * (0:(N/2)) / N;
-    
-   
-    Dpf = fft(signal);
-     
-    Dpfa = abs(Dpf(1:size(frequencies)(2)));
 
-  
-    amplitudeSpectrum = Dpfa;
-   
-endfunction
-  
 
 
 /////////////////////////////////////////////////
@@ -160,12 +147,31 @@ function result_signal = createResByAmplitude(amplitude,namePattern,signal1,sign
 endfunction
 
 
+
+function [amplitudeSpectrum, frequencies, Dpf] = computeDFT(signal, Fd)
+    N = size(signal)(2);//ищем кол-во точек в строке
+     
+    frequencies = Fd * (0:(N/2)) / N;
+    
+   
+    Dpf = fft(signal);
+     
+    Dpfa = abs(Dpf(1:size(frequencies)(2)));
+
+  
+    amplitudeSpectrum = Dpfa;
+   
+endfunction
+  
 //
 // ручные dft без ttf и подобного
 function [amplitudeSpectrum, frequencies, Dpf] = manualDFT(signal, Fs)
-    N = length(signal); 
+    N = size(signal)(2); 
     amplitudeSpectrum = zeros(1, N); 
-    frequencies = (0:N-1) * Fs / N; 
+    frequencies = (0:(N-1)) * Fs / N; 
+
+
+
 
     for n = 1:N
         sumComplex = 0;
