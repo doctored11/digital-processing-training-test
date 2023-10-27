@@ -58,8 +58,8 @@ function start()
 //    plotCreate() ;
 //    createSingleImpulse(t, 0.5,1, 5.0);
 //    
-//    plotCreate();
-//    createUnitStepSignal(t);
+    plotCreate();
+    createUnitStepSignal(t);
     
 endfunction
 
@@ -397,6 +397,23 @@ function createSingleImpulse(t, t1, t2, Amplitude)
 endfunction
   
 
+function unitStepSignal = createUnitStepSignal(t)
+    unitStepSignal = zeros(size(t));  
+    unitStepSignal(t >= 0) = 1; 
+        
+    plot(t, unitStepSignal);      
+    
+    xlabel('Время');
+    ylabel('Амплитуда');
+    title('Единичный ступенчатый сигнал Хевисайда');
+    
+    
+    a=get("current_axes")
+    a.auto_scale = "off"
+    a.data_bounds=[-1,-1;1.5,5]
+    
+endfunction
+//как же удобно у самого себя все функции из 1ой лабы воровать 
 function unitStepSignal = createUnitStepSignal(t)
     unitStepSignal = zeros(size(t));  
     unitStepSignal(t >= 0) = 1; 
