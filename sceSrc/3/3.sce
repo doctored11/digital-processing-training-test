@@ -1,31 +1,30 @@
-t = -0:0.01:0.2;
-Fs =3
+t = -0:0.001:0.2;
+Fs =44
+S=8
 
 function start()
     //1.6.2
-    signals = fillArrOfSignals(1,Fs,2,1); //шаг дискретизации заложен ( должен быть в 2 раза больше частоты)
+    signals = fillArrOfSignals(S*2,Fs,2,11); //шаг дискретизации заложен ( должен быть в 2 раза больше частоты)
    
-//    plotDrawHarmonicSignals(signals(3)) ;
-    
-//    
-//    //1.6.3
-       plotDrawHarmonicSignals(signals(3)) ;
-
-
-    discretizationSignals = plotDrawDiscretizationHarmonicSignals(signals(3)) //(1) - временно )
-//    //типо интерполяция ( plot сам по себе все делает)
-    plotCreate()
+   
      interpolatedSignals=[]
-     for i=1:length(signals(3))
-          interpolatedSignal= signals(3); //3=i
-          interpolatedSignal.amplitude = plotDrawDiscretizationHarmonicSignals(signals(3))(:, 2);//костылек (обрезаем время) + 3=i
-         
+     for i=1:length(signals)
+//          plotCreate()
+          interpolatedSignal= signals(i); //3=i
+          interpolatedSignal.amplitude = plotDrawDiscretizationHarmonicSignals(signals(i))(:, 2);//костылек (обрезаем время) + 3=i
+          disp('--1--')
+            disp(size(interpolatedSignal.amplitude))
           interpolatedSignals=[interpolatedSignals,interpolatedSignal]
      end
-    plotDrawHarmonicSignals(interpolatedSignals); //востановлением занимается plot()
-//    
-//    
-//   //поиск частоты п 
+     
+         
+        dt = 1/Fs       //фиксируем для наблюдения последствий нарушения теоремы
+//        dt = 1 / (4* signals(1).frequency);   //Котельников 2x+ 
+        t_discrete = min(t):dt:max(t);
+    plotDrawHarmonicSignals(interpolatedSignals,t_discrete,1); //востановлением занимается plot()
+////    
+////    
+////   //поиск частоты п 
 //   
     clc()
     for i=1:length(interpolatedSignals)
@@ -39,21 +38,21 @@ function start()
 //
 //    //Построить график изменения частоты дискретизированного
 //    //сигнала. Объяснить его особенности -- это не понял, частота же не меняется ( у одного сигнала)
-//
-//    //1.7.1
-//    
-//    
-    plotCreate();
-    buffSignal = createSignal(1, 3*Fs/5, 0, '1.7.1', 'r')
-    discrSignal = plotDrawDiscretizationHarmonicSignals(buffSignal)
-//    
-//    //1.7.2 - описание конечно я не понял 
-//    N=2^9;// -но чем степень выше тем выше точность 
-//    quantized_signal = quantizeSignalAutoMaxAmplitude(discrSignal, N);
-//    plot2d2( quantized_signal(:,1),quantized_signal(:,2)); 
-//    
-//    //1.7.3 - не вообще не понял, не нашел инструкцию в методе к этому
-//    
+////
+////    //1.7.1
+////    
+////    
+//    plotCreate();
+//    buffSignal = createSignal(1, 3*Fs/5, 0, '1.7.1', 'r')
+//    discrSignal = plotDrawDiscretizationHarmonicSignals(buffSignal)
+////    
+////    //1.7.2 - описание конечно я не понял 
+////    N=2^9;// -но чем степень выше тем выше точность 
+////    quantized_signal = quantizeSignalAutoMaxAmplitude(discrSignal, N);
+////    plot2d2( quantized_signal(:,1),quantized_signal(:,2)); 
+////    
+////    //1.7.3 - не вообще не понял, не нашел инструкцию в методе к этому
+////    
 
 endfunction
 
@@ -65,7 +64,7 @@ endfunction
 ////////////////////////
 //вспомогательные 
 ////////////////////////
-function signal = createSignal(amplitude, frequency, phase, name, style)
+function signal = createSignal(amplitude, frequency, phase, name, style,t)
     signal = struct('amplitude',amplitude * sin(2*%pi*frequency*t + phase),'nominalAmplitude',amplitude, 'frequency', frequency, 'phase', phase, 'name', name, 'style', style);
 endfunction
 
@@ -86,8 +85,10 @@ function clr = getRandomColor(rndNum)
 endfunction
 
 function plotCreate()
+ 
     sleep(500);
     figure();
+     addGridToPlot()
     sleep(100); 
 endfunction
 
@@ -95,15 +96,23 @@ endfunction
 ////////////////
 //рисовалки
 ////////////////
-function plotDrawHarmonicSignals(signals) 
-    addGridToPlot();
+function plotDrawHarmonicSignals(signals,t,_mode) 
+    
+     if nargin < 3 then
+        _mode = 0;  
+    end
+//    addGridToPlot();
     legend_labels = []; 
 
     for i = 1:length(signals)
+     if (_mode)   plotCreate() end;        
+
+        
+        
         plot(t, signals(i).amplitude, signals(i).style);
         legend_labels = [legend_labels, signals(i).name];
     end
-    legend(legend_labels);
+//    legend(legend_labels);
     xlabel('Время');
     ylabel('Амплитуда');
     title('Гармонический сигнал');
@@ -116,18 +125,34 @@ function step_points = plotDrawDiscretizationHarmonicSignals(signals)
     step_points = [];
 
     for i = 1:length(signals)
-        amplitude = signals(i).amplitude;
-        Fs = signals(i).frequency;
-        dt = 1 / Fs;                     
+       
+   
+        U0=signals(i).nominalAmplitude;
+        fr0 = signals(i).frequency; //- так надо для коректного квантования(это частота сигнала а не квантования)
+        
+        
 
-        t_discrete = t;
-        plot2d2(t_discrete, amplitude);
+//        dt = 1 / (4* signals(i).frequency);   //Котельников 2x+           
+        dt = 1/Fs       //фиксируем для наблюдения последствий нарушения теоремы
+
+        t_discrete = min(t):dt:max(t);
+        style =  getRandomColor(0);
+        
+        descrSignal =  createSignal(U0, fr0, 0, 'descr',sprintf('%s', style),t_discrete)
+        amplDescr =descrSignal.amplitude;
+       
+        
+        plotCreate();
+        plot2d3(t_discrete, amplDescr);
+        plotDrawHarmonicSignals(signals(i)) //просто вывод исходного для наглядности
+//        plot2d2(t_discrete, amplDescr);
         legend_labels = [legend_labels, signals(i).name];
+      
 
-        step_points = [step_points; [t_discrete', amplitude']];
+        step_points = [step_points; [t_discrete', amplDescr']];
     end
 
-    legend(legend_labels);
+//    legend(legend_labels);
     xlabel('Время');
     ylabel('Амплитуда');
     title('Дискретизированный сигнал');
@@ -150,7 +175,7 @@ function arr = fillArrOfSignals(discretizationStep, discretizationFrequency, N1,
         
         style =  getRandomColor(i);
         i=i+1;
-        newSignal = createSignal(amplitude, fr, 0, '1',sprintf('%s', style));
+        newSignal = createSignal(amplitude, fr, 0, '1',sprintf('%s', style),t);
         arr = [arr, newSignal]; // Добавляем сигнал в массив arr
     end
 endfunction
