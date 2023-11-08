@@ -5,7 +5,7 @@ tau=1;
 function start()
     signals = [
         createSignal(1, 1, %pi/2, '1', 'r-'),
-        createSignal(2, 2, -%pi/4, '2', 'b-')
+        createSignal(2, 1, -%pi/4, '2', 'b-')
        ];
        
    result_sum = addSignals(signals(1), signals(2));
@@ -17,13 +17,13 @@ function start()
    //и вызов start())
    signals = [
             signals;
-//            result_sum;
+            result_sum;
 //            result_substract;
 //            result_multy;
 //            result_devide;
             ];
-   plotCreate() ;
-   plotDrawHarmonicSignals(signals);
+//   plotCreate() ;
+//   plotDrawHarmonicSignals(signals);
 //   
 //   plotCreate();
 //   plotLissajousFigure(signals(1), signals(2));
@@ -32,34 +32,38 @@ function start()
 //   plotLissajousWithPhaseShift(signals(1), signals(2));
 ////   
 //   plotCreate() 
- //  plotLissajousWithFrequencyShift(signals(1), signals(2));
+//   plotLissajousWithFrequencyShift(signals(1), signals(2));
 //   
-//plotCreate() ;
-//  createSquarewave(50, 2, 5, t);
+plotCreate() ;
+clf()
+  createSquarewave(50, 2, 5, t);
 //////   
-//   plotCreate() ;
-//   createTriangularewave(10,1,5,t);
+   plotCreate() ;
+   clf()
+   createTriangularewave(10,1,5,t);
 //////   
 //   plotCreate();
 //  createSawwave(10,1,5,t);
 //   
-   plotCreate() ;
-   createFurieFourth(1000,1,3,t,tau);
+//   plotCreate() ;
+//   createFurieFourth(1000,1,3,t,tau);
 //   
-   plotCreate() ;
-   createFurieFifth(1000,10,3,t,tau);
+//   plotCreate() ;
+//   createFurieFifth(1000,10,3,t,tau);
 //   
 //   plotCreate() ;
 //  createFurieSixth(4,1,5,t);
 //   
 //   plotCreate() ;
 //   plotDrawStepSignal(signals(1));
-////
+//
 //    plotCreate() ;
+//    clf()
 //    createSingleImpulse(t, 0.5,1, 5.0);
-//    
-    plotCreate();
-    createUnitStepSignal(t);
+////    
+//    plotCreate();
+//    clf()
+//    createUnitStepSignal(t);
     
 endfunction
 
@@ -194,8 +198,8 @@ function plotLissajousFigure(signalX, signalY)
     xlabel('Сигнал X');
     ylabel('Сигнал Y');
     title('Фигура Лиссажу');
-    legend(['фаза ' + string(signalX.phase) + ', частота ' + string(signalX.frequency), ...
-        'фаза ' + string(signalY.phase) + ', частота ' + string(signalY.frequency)])
+//    legend(['фаза ' + string(signalX.phase) + ', частота ' + string(signalX.frequency), ...
+//        'фаза ' + string(signalY.phase) + ', частота ' + string(signalY.frequency)])
 
     
 endfunction
@@ -235,7 +239,7 @@ endfunction
 
 function plotLissajousWithFrequencyShift(signalX, signalY)
     clf(); 
-    step = 1
+    step = 0.5
     frequenses = 0:step:3*%pi; 
     count = length(frequenses);
     c_x = ceil(sqrt( count));

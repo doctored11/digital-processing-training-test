@@ -9,21 +9,23 @@ function start()
    
      interpolatedSignals=[]
      for i=1:length(signals)
-//          plotCreate()
+          plotCreate()
           interpolatedSignal= signals(i); //3=i
+          subplot(1,2,1)
           interpolatedSignal.amplitude = plotDrawDiscretizationHarmonicSignals(signals(i))(:, 2);//костылек (обрезаем время) + 3=i
           disp('--1--')
             disp(size(interpolatedSignal.amplitude))
-          interpolatedSignals=[interpolatedSignals,interpolatedSignal]
+//          interpolatedSignals=[interpolatedSignals,interpolatedSignal]
+          
+            dt = 1/Fs       //фиксируем для наблюдения последствий нарушения теоремы
+//        dt = 1 / (4* signals(1).frequency);   //Котельников 2x+ 
+         t_discrete = min(t):dt:max(t);
+          subplot(1,2,2)
+        plotDrawHarmonicSignals(interpolatedSignal,t_discrete,0); //востановлением занимается plot()
      end
      
          
-        dt = 1/Fs       //фиксируем для наблюдения последствий нарушения теоремы
-//        dt = 1 / (4* signals(1).frequency);   //Котельников 2x+ 
-        t_discrete = min(t):dt:max(t);
-    plotDrawHarmonicSignals(interpolatedSignals,t_discrete,1); //востановлением занимается plot()
-////    
-////    
+
 ////   //поиск частоты п 
 //   
     clc()
@@ -142,7 +144,7 @@ function step_points = plotDrawDiscretizationHarmonicSignals(signals)
         amplDescr =descrSignal.amplitude;
        
         
-        plotCreate();
+       
         plot2d3(t_discrete, amplDescr);
         plotDrawHarmonicSignals(signals(i)) //просто вывод исходного для наглядности
 //        plot2d2(t_discrete, amplDescr);
