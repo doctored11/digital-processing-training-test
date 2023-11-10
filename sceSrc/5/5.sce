@@ -1,4 +1,4 @@
-
+//Если что то не работает - возможно запуск несколько раз подряд поможет)
 //то что надо знать
 Tc = 0.32;
 U0=20;
@@ -20,14 +20,14 @@ function start()
     //v1 одиночный импульс
    impulseSignal = createSingleImpulse(t, -Tc/2, Tc/2, U0)
  
- //раскоментировать ОДИН нужный - но по факту 1к1 и с такими данными человеку скорость не отличить
-//    [amplitudeSpectrum, frequencies,Dpf] = computeDFT(impulseSignal, Fd);//обычный fft
+// раскоментировать ОДИН нужный - но по факту 1к1 и с такими данными человеку скорость не отличить
+    [amplitudeSpectrum, frequencies,Dpf] = computeDFT(impulseSignal, Fd);//обычный fft
     [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(impulseSignal, Fd, 1); // FFTW_ESTIMATE
-//   [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(impulseSignal, Fd, 2);  //FFTW_MEASURE
-//   [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(impulseSignal, Fd, 3); // FFTW_PATIENT
-  //обратный ДПФ
+   [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(impulseSignal, Fd, 2);//  FFTW_MEASURE
+   [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(impulseSignal, Fd, 3); // FFTW_PATIENT
+//  обратный ДПФ
     ReverseDpf=ifft(Dpf)
-  //СПМ (дпф на сопр вектор)
+//  СПМ (дпф на сопр вектор)
     Spm = amplitudeSpectrum.*conj(amplitudeSpectrum)
     
     
@@ -49,13 +49,16 @@ function start()
        ];
        
      result_sum = addSignals(signals(1), signals(2));
-
+ 
       
-       //раскоментировать ОДИН нужный - но по факту 1к1 и с такими данными человеку скорость не отличить
-//    [amplitudeSpectrum, frequencies,Dpf] = computeDFT(result_sum.amplitude, Fd);//обычный fft
-//    [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(result_sum.amplitude, Fd, 1); // FFTW_ESTIMATE
+      
+      
+      
+      // раскоментировать ОДИН нужный - но по факту 1к1 и с такими данными человеку скорость не отличить
+    [amplitudeSpectrum, frequencies,Dpf] = computeDFT(result_sum.amplitude, Fd);//обычный fft
+    [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(result_sum.amplitude, Fd, 1); // FFTW_ESTIMATE
   [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(result_sum.amplitude, Fd, 2);  //FFTW_MEASURE
-//   [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(result_sum.amplitude, Fd, 3); // FFTW_PATIENT
+   [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(result_sum.amplitude, Fd, 3); // FFTW_PATIENT
       
      //обратный ДПФ
     ReverseDpf=ifft(Dpf)
@@ -72,7 +75,7 @@ function start()
     subplot(2,2,3); plot(t, ReverseDpf); xtitle('ОДПФ')
     subplot(2,2,4); plot(frequencies, Spm); xtitle('СПМ')
 
-    
+//    
 endfunction
 
 
@@ -148,12 +151,14 @@ endfunction
 
 function [amplitudeSpectrum, frequencies, Dpf] = computeDFTWithFFTW(signal, Fd, method) //результат тот же 
 
-     //инициализацию вынес для справедливого замера
-    Dpf = fftw(signal); //это не повторение ( в info есть ремарка о инициализации в части случаев)
-    //с этой инициализацией сильно медленнее (а смысл то в производительности)
+     
     
    
     tic();
+    //инициализацию вынес для справедливого замера
+//    Dpf = fftw(signal); //это не повторение ( в info есть ремарка о инициализации в части случаев) --что то не помогает на самом деле,
+//не понимаю где объявлять - нет доступа к планированиям(
+    //с этой инициализацией сильно медленнее (а смысл то в производительности)
     N = size(signal)(2);
     frequencies = Fd * (0:(N/2)) / N;
   

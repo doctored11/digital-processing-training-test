@@ -1,23 +1,27 @@
 
 //то что надо знать
-Tc = 0.32;
-U0=27;
+Tc = 0.24;
+U0=20;
 Fd = 1200;
 //для синусоид
-U01 = 11;
+U01 = 18;
 U02=U0-U01;
 f1 = 180;//частота
 f2 = 50;
 phase1 =%pi/3;
 phase2 =%pi/6;
+Tc2=0.32
 
 //
 
 t =-Tc:1/Fd:Tc;
+t2 =0:0.001:Tc2;
+         
+         
 
 function start()
     
-    //v1 одиночный импульс
+//    v1 одиночный импульс
    impulseSignal = createSingleImpulse(t, -Tc/2, Tc/2, U0)
  
   [amplitudeSpectrum, frequencies,Dpf] = computeDFT(impulseSignal, Fd);
@@ -32,6 +36,7 @@ function start()
     //Построение графиков
 //    disp(amplitudeSpectrum)
     figure;
+    clf()
     subplot(2,2,1); plot(t, impulseSignal); xtitle('Исходный сигнал')
     subplot(2,2,2); plot(frequencies, amplitudeSpectrum); xtitle('ДПФ1')
     subplot(2,2,3); plot(t, ReverseDpf); xtitle('ОДПФ')
@@ -57,10 +62,10 @@ function start()
     disp(size( amplitudeSpectrum.'))
     disp(size(frequencies))
      figure;
-    subplot(2,2,1); plot(t, result_sum.amplitude); xtitle('Исходный сигнал')
+    subplot(2,2,1); plot(t2, result_sum.amplitude); xtitle('Исходный сигнал')
        subplot(2,2,2); plot(frequencies, amplitudeSpectrum.'); xtitle('ДПФ2')
 
-    subplot(2,2,3); plot(t, ReverseDpf); xtitle('ОДПФ')
+    subplot(2,2,3); plot(t2, ReverseDpf); xtitle('ОДПФ')
     subplot(2,2,4); plot(frequencies, Spm); xtitle('СПМ')
 
     
@@ -75,7 +80,7 @@ endfunction
 //вспомогательные 
 ////////////////////////
 function signal = createSignal(amplitude, frequency, phase, name, style)
-    signal = struct('amplitude',amplitude * sin(2*%pi*frequency*t + phase),'nominalAmplitude',amplitude, 'frequency', frequency, 'phase', phase, 'name', name, 'style', style);
+    signal = struct('amplitude',amplitude * sin(2*%pi*frequency*t2 + phase),'nominalAmplitude',amplitude, 'frequency', frequency, 'phase', phase, 'name', name, 'style', style);
 endfunction
 
 function addGridToPlot()
@@ -171,8 +176,6 @@ function [amplitudeSpectrum, frequencies, Dpf] = manualDFT(signal, Fs)
     frequencies = (0:(N-1)) * Fs / N; 
 
 
-
-
     for n = 1:N
         sumComplex = 0;
 
@@ -185,6 +188,10 @@ function [amplitudeSpectrum, frequencies, Dpf] = manualDFT(signal, Fs)
     end
 
     amplitudeSpectrum = abs(Dpf);
+    
+    //Обрезание - немного не честно) 
+//    amplitudeSpectrum = abs(Dpf(1:(N/2)+1));
+//     frequencies = frequencies(1:(N/2)+1);
     
 endfunction
 
