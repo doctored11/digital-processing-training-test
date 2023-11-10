@@ -1,11 +1,11 @@
- t = -1:0.001:10
+ t = -1:0.001:15
 
 
 tau=1;
 function start()
     signals = [
-        createSignal(1, 1, %pi/2, '1', 'r-'),
-        createSignal(2, 1, -%pi/4, '2', 'b-')
+        createSignal(2, 0.5, %pi/4, '1', 'r-'),
+        createSignal(1, 0.5, -%pi/6, '2', 'b-')
        ];
        
    result_sum = addSignals(signals(1), signals(2));
@@ -17,31 +17,31 @@ function start()
    //и вызов start())
    signals = [
             signals;
-            result_sum;
+//            result_sum;
 //            result_substract;
 //            result_multy;
-//            result_devide;
+            result_devide;
             ];
 //   plotCreate() ;
 //   plotDrawHarmonicSignals(signals);
 //   
 //   plotCreate();
 //   plotLissajousFigure(signals(1), signals(2));
-////   
+//   
 //   plotCreate()
 //   plotLissajousWithPhaseShift(signals(1), signals(2));
 ////   
-//   plotCreate() 
-//   plotLissajousWithFrequencyShift(signals(1), signals(2));
-//   
-plotCreate() ;
-clf()
-  createSquarewave(50, 2, 5, t);
-//////   
-   plotCreate() ;
-   clf()
-   createTriangularewave(10,1,5,t);
-//////   
+   plotCreate() 
+   plotLissajousWithFrequencyShift(signals(1), signals(2));
+   
+//plotCreate() ;
+//clf()
+//  createSquarewave(50, 2, 5, t);
+////////   
+//   plotCreate() ;
+//   clf()
+//   createTriangularewave(10,1,5,t);
+////   
 //   plotCreate();
 //  createSawwave(10,1,5,t);
 //   
@@ -53,7 +53,7 @@ clf()
 //   
 //   plotCreate() ;
 //  createFurieSixth(4,1,5,t);
-//   
+   
 //   plotCreate() ;
 //   plotDrawStepSignal(signals(1));
 //

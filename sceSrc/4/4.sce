@@ -1,16 +1,16 @@
 
 //то что надо знать
-Tc = 0.24;
-U0=20;
-Fd = 1200;
+Tc = 0.34;
+U0=13;
+Fd = 800;
 //для синусоид
-U01 = 18;
-U02=U0-U01;
-f1 = 180;//частота
-f2 = 50;
-phase1 =%pi/3;
-phase2 =%pi/6;
-Tc2=0.32
+U01 = 4;
+U02= U0-U01;
+f1 = 40;//частота
+f2 = 8;
+phase1 =%pi/6;
+phase2 =%pi/4;
+Tc2=0.36
 
 //
 
@@ -190,8 +190,8 @@ function [amplitudeSpectrum, frequencies, Dpf] = manualDFT(signal, Fs)
     amplitudeSpectrum = abs(Dpf);
     
     //Обрезание - немного не честно) 
-//    amplitudeSpectrum = abs(Dpf(1:(N/2)+1));
-//     frequencies = frequencies(1:(N/2)+1);
+    amplitudeSpectrum = abs(Dpf(1:(N/2)+1));
+     frequencies = frequencies(1:(N/2)+1);
     
 endfunction
 

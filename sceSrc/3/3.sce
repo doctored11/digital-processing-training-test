@@ -1,10 +1,10 @@
 t = -0:0.001:0.2;
 Fs =44
-S=8
+S=10
 
 function start()
-    //1.6.2
-    signals = fillArrOfSignals(S*2,Fs,2,11); //шаг дискретизации заложен ( должен быть в 2 раза больше частоты)
+    //1.6.3
+    signals = fillArrOfSignals(Fs/S,Fs,2,11); //шаг дискретизации заложен ( должен быть в 2 раза больше частоты)
    
    
      interpolatedSignals=[]
@@ -78,7 +78,7 @@ endfunction
 
 
 function clr = getRandomColor(rndNum)
-     colors = [ '--g', '--c', '--m', '--y', '--r'];
+     colors = [ '-g', '-c', '-m', '-y', '-r'];
     if (rndNum == 0) || (rndNum > size(colors, 2)) then
         rndNum = ceil(rand() * length(colors));
     end
@@ -170,7 +170,7 @@ endfunction
 
 //discretizationStep =df ,discretizationFrequency=fd
 function arr = fillArrOfSignals(discretizationStep, discretizationFrequency, N1, amplitude)
-    fmax = N1 * discretizationFrequency;
+    fmax = N1 * discretizationFrequency+discretizationStep;
     arr = [];
     i=1
     for fr = discretizationStep:discretizationStep:fmax

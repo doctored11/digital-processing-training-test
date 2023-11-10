@@ -1,27 +1,29 @@
+//это дерьмо может работать реально медленно
 
 //то что надо знать
-//bt
-Tc2 = 0.26;
-U0=27;
-Fd = 1000;
-
 
 //для синусоид at
-U01 = 11;
+U01 = 3;
 U02=U0-U01;
-Tc1=0.32;
-f1 = 10;
-phase1 =0; //%pi/6
+Tc1=0.34;
+f1 =7;
+phase1 =%pi/2; //%pi/6
 
+//bt
+Tc2 = 0.34;
+U0=12;
+Fd = 1000;
+
+//ct
+t0=0.16
+Tc3=2*t0
 
 //dt
 
-B=10
-Tc4=0.26
+B=-13
+Tc4=0.35
 
-//ct
-t0=0.26
-Tc3=2*t0
+
 //
 t=0:0.001:Tc1;
 t2 =-Tc2:1/Fd:Tc2;
@@ -33,7 +35,7 @@ function start()
     
      
     at = createSignal(U01, f1, phase1, '1', 'r-'); //эта структура тянется с первой лабы, тогда я думал что параметры сигналов будут нужны
-    bt = createSingleImpulse(t2, -Tc/2, Tc/2, U0);
+    bt = createSingleImpulse(t2, -Tc2/2, Tc2/2, U0);
     ct = createUnitStepSignal(t3,t0);
     dt = exp(B*t4);
     
