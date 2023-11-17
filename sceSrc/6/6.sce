@@ -1,27 +1,26 @@
 //это дерьмо может работать реально медленно
 
 //то что надо знать
-
+U0=27;
 //для синусоид at
-U01 = 3;
-U02=U0-U01;
-Tc1=0.34;
-f1 =7;
-phase1 =%pi/2; //%pi/6
+U01 = 18;
+
+Tc1=0.32;
+f1 = 10;
+phase1 =0; //%pi/6
 
 //bt
-Tc2 = 0.34;
-U0=12;
+Tc2 = 0.32;
 Fd = 1000;
 
 //ct
-t0=0.16
+t0=0.26
 Tc3=2*t0
 
 //dt
 
-B=-13
-Tc4=0.35
+B=10
+Tc4=0.26
 
 
 //
@@ -49,12 +48,20 @@ function start()
     dt_balanced = [dt, zeros(1, max_length - length(dt))];
     
     //свертки (не фольга)
-    y1=calcConvolution(at.amplitude,bt)
-    y2=calcConvolution(bt,bt)
-    y3=calcConvolution(ct,bt)
-    y4=calcConvolution(dt,bt)
-    y5=calcConvolution(at.amplitude,dt)
-    y6=calcConvolution(at.amplitude,at.amplitude)
+    y1=calcConvolution(at.amplitude,at.amplitude)
+    y2=calcConvolution(at.amplitude,bt)
+    y3=calcConvolution(at.amplitude,ct)
+    y4 =calcConvolution(at.amplitude,dt)
+    
+    y5=calcConvolution(bt,bt)
+    y6=calcConvolution(bt,ct)
+    y7=calcConvolution(bt,dt)
+   
+    y8=calcConvolution(dt,ct)
+    y9=calcConvolution(dt,dt)
+    
+    y10 = calcConvolution(ct,ct)
+    
     
        
    
@@ -92,12 +99,16 @@ disp(length(tBuff));
 //построение свертков
 scf(2)
 step = 0.001;
-y = {y1, y2, y3, y4, y5, y6}; 
-titles = {'a(t)*b(t)', 'b(t)*b(t)', 'c(t)*b(t)', 'd(t)*b(t)', 'a(t)*d(t)', 'a(t)*a(t)'};
+y = {y1, y2, y3, y4, y5, y6,y7,y8,y9,y10}; 
+titles = {'a(t)*a(t)', 'a(t)*b(t)','a(t)*c(t)', 'a(t)*d(t)',  'b(t)*b(t)', 'b(t)*c(t)','b(t)*d(t)',  'd(t)*c(t)', 'd(t)*d(t)','c(t)*c(t)'};
 
-for i = 1:6
-    subplot(2, 3, i);
+for i = 1:10
+    subplot(2, 5, i);
+    disp(i)
+   
+    disp(size( y{i}))
     plot(0:step:(size(y{i}, '*') - 1) * step, y{i});
+    
     xtitle(['Свертка ', titles{i}]);
 end
 
@@ -272,6 +283,7 @@ function unitStepSignal = createUnitStepSignal(t, t_0)
 endfunction
 
 function y = calcConvolution(h, s)
+    //форм 4
     size_h = size(h, '*'); 
     size_s = size(s, '*'); 
     size_y = size_h + size_s - 1; 
